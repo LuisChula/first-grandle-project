@@ -1,0 +1,4 @@
+rootProject.name = 'first-grandle-project'
+include 'pub'
+include 'sub'
+
