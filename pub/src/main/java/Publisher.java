@@ -15,8 +15,6 @@ public class Publisher extends AbstractActor {
                         String.class,
                         in -> {
                             String out = in.toUpperCase();
-                            System.out.println(out);
-                            System.out.println(mediator);
                             mediator.tell(new DistributedPubSubMediator.Publish("content", out), getSelf());
                         })
                 .build();

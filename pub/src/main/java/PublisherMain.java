@@ -1,36 +1,29 @@
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
+import akka.actor.Address;
 import akka.actor.Props;
+import akka.cluster.Cluster;
 
 import java.util.Scanner;
 
 public class PublisherMain {
 
     public static void main(String[] args) {
-        ActorSystem system = ActorSystem.create("system");
+        String systemName = "PubSub";
+        ActorSystem system2 = ActorSystem.create(systemName);
+        Cluster cluster2 = Cluster.get(system2);
+        cluster2.join(new Address("akka", systemName, "127.0.0.1", 2551));
 
-        // somewhere else
-        ActorRef publisher = system.actorOf(Props.create(Publisher.class), "publisher");
-
-        // wait a bit for the subscription to be gossiped
-        try {
-            Thread.sleep(3000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
+        ActorRef publisher = system2.actorOf(Props.create(Publisher.class), "publisher");
         // after a while the subscriptions are replicated
         publisher.tell("hello", null);
 
         Scanner myObj = new Scanner(System.in);  // Create a Scanner object
         String c;
         do {
-            System.out.print("> ");
             c = myObj.nextLine();  // Read user input
-            System.out.println(c);
             publisher.tell(c, null);
         } while(!c.equals("e"));
-
 
     }
 
